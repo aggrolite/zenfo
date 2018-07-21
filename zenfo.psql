@@ -1,0 +1,32 @@
+CREATE TABLE venues (
+    id SERIAL PRIMARY KEY,
+    name text NOT NULL,
+    addr text NOT NULL,
+	geo point NOT NULL,
+    website text,
+	phone text,
+	email text
+);
+
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    venue_id int REFERENCES venues(id),
+    name text,
+	blurb text,
+    description text,
+    url text,
+    contact text, -- phone, email, etc.
+    start_date timestamptz NOT NULL,
+    end_date timestamptz NOT NULL
+);
+
+CREATE TABLE categories (
+    id int PRIMARY KEY,
+    name text NOT NULL
+);
+
+CREATE TABLE events_categories (
+    id int PRIMARY KEY,
+    event_id int REFERENCES events(id),
+    category_id int REFERENCES categories(id)
+);
