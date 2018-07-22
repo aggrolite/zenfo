@@ -35,9 +35,6 @@ func (api *API) Run() error {
 	} else {
 		http.HandleFunc("/api/events", api.getEvents)
 	}
-	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/favicon.ico")
-	})
 	log.Printf("HTTP API listening on port %d\n", api.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", api.Port), nil)
 }
