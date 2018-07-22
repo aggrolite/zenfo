@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/aggrolite/zenfo"
 )
@@ -13,8 +14,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&dbName, "dbname", "", "Postgres DB name")
-	flag.StringVar(&dbUser, "dbuser", "", "Postgres DB user")
+	flag.StringVar(&dbName, "dbname", os.Getenv("DBNAME"), "Postgres DB name")
+	flag.StringVar(&dbUser, "dbuser", os.Getenv("DBUSER"), "Postgres DB user")
 	flag.Parse()
 }
 
