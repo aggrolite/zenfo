@@ -1,3 +1,5 @@
+//go:generate esc -o static.go -pkg zenfo -prefix static static
+
 package zenfo
 
 import (
@@ -29,7 +31,7 @@ func NewAPI(dbUser, dbName string, port int, temp bool) (*API, error) {
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
 	if api.comingSoon {
-		http.Handle("/", http.FileServer(http.Dir("./static")))
+		http.Handle("/", http.FileServer(FS(false)))
 	} else {
 		http.HandleFunc("/api/events", api.getEvents)
 	}

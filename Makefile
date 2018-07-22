@@ -1,6 +1,8 @@
 GO_PKG_DIRS  := $(subst $(shell go list -e .),.,$(shell go list ./... | grep -v /vendor/))
 
-all: build
+all: build http
+
+http:
 	zenfo-http
 
 build: fmt lint vet db
