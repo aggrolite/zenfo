@@ -18,7 +18,8 @@ Sources are scraped by using the `Worker` interface. All workers share a common 
 1. Add at least two more sources for crawling. Ideally one from East Bay, and one South Bay.
 2. Add basic frontend UI, ideally something in JS.
 3. Add some sort of detection on when a crawler is completely busted and needs updating.
+4. Add Dockerfile for easy deploy.
 
 ## Build / Install
 
-For now, simply run `make` to try it out. A Postgres instance is required to be running in the background. I am developing on macOS and vendoring is tied to it, but when I get closer to a 1.0 release my plan is to tune for Linux / setup Docker.
+For now, simply run `make` to try it out. A Postgres instance is required to be running in the background using provided .psql schema.
