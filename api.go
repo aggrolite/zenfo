@@ -10,23 +10,32 @@ import (
 
 // API provides HTTP endpoints for serving events
 type API struct {
-	Port   int
-	dbUser string
-	dbName string
+	Port       int
+	dbUser     string
+	dbName     string
+	comingSoon bool
 }
 
 // NewAPI returns new API object
-func NewAPI(dbUser, dbName string, port int) (*API, error) {
+func NewAPI(dbUser, dbName string, port int, temp bool) (*API, error) {
 	return &API{
-		Port:   port,
-		dbUser: dbUser,
-		dbName: dbName,
+		Port:       port,
+		dbUser:     dbUser,
+		dbName:     dbName,
+		comingSoon: temp,
 	}, nil
 }
 
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
-	http.HandleFunc("/api/events", api.getEvents)
+	if api.comingSoon {
+		http.Handle("/", http.FileServer(http.Dir("./static")))
+	} else {
+		http.HandleFunc("/api/events", api.getEvents)
+	}
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/favicon.ico")
+	})
 	log.Printf("HTTP API listening on port %d\n", api.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", api.Port), nil)
 }
