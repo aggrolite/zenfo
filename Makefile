@@ -25,7 +25,9 @@ fmt:
 lint:
 	golint -set_exit_status $(GO_PKG_DIRS)
 
-# docker build -t zenfo:v1 .
+dbuild:
+	docker build -t zenfo:v1 .
+
 docker:
 	docker run --rm -it \
 	-e POSTGRES_PASSWORD=secret \
