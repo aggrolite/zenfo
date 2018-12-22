@@ -12,9 +12,7 @@ RUN \
 	gcc \
 	&& rm -rf /var/lib/apt/lists/*
 
-ENV GOPATH=/go \
-	GOROOT=/usr/local/go \
-	PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+ENV GOPATH=/go GOROOT=/usr/local/go PATH=/usr/local/go/bin:/go/bin:$PATH
 
 RUN \
 	curl -k -o /tmp/go.tgz https://dl.google.com/go/go1.11.3.linux-amd64.tar.gz && \
