@@ -8,7 +8,7 @@ http:
 build: fmt lint vet db
 	go clean -i
 	go install ./...
-	zenfo-build
+	zenfo-build -dbname zenfo -dbuser postgres
 
 db:
 	dropdb zenfo --if-exists
