@@ -70,6 +70,7 @@ func (s *Sfzc) Init(client *Client) error {
 		Lng:     -122.563911,
 		Website: "http://sfzc.org/green-gulch",
 	}
+	s.venueMap["Online"] = s.venueMap["City Center"]
 
 	return nil
 }
@@ -116,7 +117,7 @@ func (s *Sfzc) Events() ([]*Event, error) {
 
 		venue, ok := s.venueMap[e.Location]
 		if !ok {
-			return nil, fmt.Errorf("Failed to match venue for '%s'", e.Location)
+			return nil, fmt.Errorf("Failed to match venue for '%s' - event=%+v", e.Location, e)
 		}
 
 		finalEvent := &Event{
