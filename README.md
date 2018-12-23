@@ -23,3 +23,9 @@ Sources are scraped by using the `Worker` interface. All workers share a common 
 ## Build / Install
 
 For now, simply run `make` to try it out. A Postgres instance is required to be running in the background using provided .psql schema.
+
+## License
+
+Currently this project is licensed under AGPL v3.0. See `LICENSE` for details.
+
+I'm usually not a fan of anything GPL, but with this project it feels right. License may change in the future to something more permissive.
