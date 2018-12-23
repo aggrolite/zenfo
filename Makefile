@@ -11,7 +11,7 @@ build: fmt lint vet db
 	zenfo-build
 
 db:
-	dropdb zenfo
+	dropdb zenfo --if-exists
 	createdb zenfo
 	psql zenfo < zenfo.psql
 
@@ -33,4 +33,5 @@ docker:
 	-e POSTGRES_PASSWORD=secret \
 	-v $$(pwd):/code \
 	-w /code \
-	zenfo:latest /bin/bash
+	zenfo:v1 \
+	/bin/bash
