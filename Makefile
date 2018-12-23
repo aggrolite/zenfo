@@ -3,7 +3,7 @@ GO_PKG_DIRS  := $(subst $(shell go list -e .),.,$(shell go list ./... | grep -v 
 all: build http
 
 http:
-	zenfo-http
+	zenfo-http -dbname zenfo -dbuser postgres
 
 build: fmt lint vet db
 	go clean -i
@@ -31,6 +31,7 @@ dbuild:
 docker:
 	docker run --rm -it \
 	-e POSTGRES_PASSWORD=secret \
+	-p 8080:8080 \
 	-v $$(pwd):/code \
 	-w /code \
 	zenfo:v1 \

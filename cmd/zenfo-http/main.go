@@ -21,10 +21,19 @@ func init() {
 	flag.StringVar(&dbName, "dbname", os.Getenv("DBNAME"), "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", os.Getenv("DBUSER"), "Postgres DB user")
 	flag.Parse()
+
+	if len(dbName) == 0 {
+		flag.Usage()
+		os.Exit(2)
+	}
+	if len(dbUser) == 0 {
+		flag.Usage()
+		os.Exit(2)
+	}
 }
 
 func main() {
-	api, err := zenfo.NewAPI(dbName, dbUser, port, temp)
+	api, err := zenfo.NewAPI(dbUser, dbName, port, temp)
 	if err != nil {
 		log.Fatal(err)
 	}
