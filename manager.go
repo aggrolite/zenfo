@@ -35,7 +35,21 @@ func NewManager(dbName, dbUser string) (*Manager, error) {
 // Run iterates all workers for execution
 func (m *Manager) Run() error {
 
+	// http client
 	client := NewClient()
+
+	venueSelect, err := m.db.Prepare(`SELECT id FROM venues WHERE name=$1`)
+	if err != nil {
+		return err
+	}
+	venueInsert, err := m.db.Prepare(`INSERT INTO venues (name, addr, geo, website, phone, email) VALUES ($1, $2, point($3, $4), $5, $6, $7) RETURNING id`)
+	if err != nil {
+		return err
+	}
+	eventStmt, err := m.db.Prepare("INSERT INTO events (venue_id, name, blurb, description, start_date, end_date, url) VALUES ($1, $2, $3, $4, $5, $6, $7)")
+	if err != nil {
+		return err
+	}
 
 	for name, w := range m.workers {
 
@@ -50,38 +64,25 @@ func (m *Manager) Run() error {
 			return err
 		}
 
-		venueSelect, err := m.db.Prepare(`SELECT id FROM venues WHERE name=$1`)
-		if err != nil {
-			return err
-		}
-		venueInsert, err := m.db.Prepare(`INSERT INTO venues (name, addr, geo, website, phone, email) VALUES ($1, $2, point($3, $4), $5, $6, $7) RETURNING id`)
-		if err != nil {
-			return err
-		}
-		eventStmt, err := m.db.Prepare("INSERT INTO events (venue_id, name, blurb, description, start_date, end_date, url) VALUES ($1, $2, $3, $4, $5, $6, $7)")
-		if err != nil {
-			return err
-		}
-
 		for _, e := range events {
 			log.Printf("event=%+v\n", e)
 
 			venue := e.Venue
 
 			var venueID int
-			if err := venueSelect.QueryRow(venue.Name).Scan(&venueID); err != nil {
-				if err == sql.ErrNoRows {
-					if err := venueInsert.QueryRow(venue.Name, venue.Addr, venue.Lat, venue.Lng, venue.Website, venue.Phone, venue.Email).Scan(&venueID); err != nil {
-						return err
-					}
 
-				} else {
+			// Create any new venues found from events
+			err := venueSelect.QueryRow(venue.Name).Scan(&venueID)
+			if err == sql.ErrNoRows {
+				if err := venueInsert.QueryRow(venue.Name, venue.Addr, venue.Lat, venue.Lng, venue.Website, venue.Phone, venue.Email).Scan(&venueID); err != nil {
 					return err
 				}
+			} else if err != nil {
+				return err
 			}
 
-			_, err := eventStmt.Exec(venueID, e.Name, e.Blurb, e.Desc, e.Start, e.End, e.URL)
-			if err != nil {
+			// Store event
+			if _, err := eventStmt.Exec(venueID, e.Name, e.Blurb, e.Desc, e.Start, e.End, e.URL); err != nil {
 				return err
 			}
 		}

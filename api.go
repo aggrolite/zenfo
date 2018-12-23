@@ -42,7 +42,8 @@ func (api *API) Run() error {
 func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", api.dbUser, api.dbName))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("url=%s err=%s\n", r.URL, err)
+		http.Error(w, "Oops! Something went wrong!", http.StatusInternalServerError)
 		return
 	}
 	defer db.Close()
@@ -50,7 +51,8 @@ func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
 	// Fetch events
 	rows, err := db.Query(`SELECT venue_id, name, blurb, description, start_date, end_date, url FROM events`)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("url=%s err=%s\n", r.URL, err)
+		http.Error(w, "Oops! Something went wrong!", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()

@@ -8,7 +8,9 @@ package zenfo
 // https://www.aczc.org/schedule/
 
 import (
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -66,50 +68,103 @@ func (s *Aczc) Events() ([]*Event, error) {
 		return nil, err
 	}
 
-	errs := make(chan error)
-	go func() {
-		doc.Find("h1").Each(func(_ int, h1 *goquery.Selection) {
+	var (
+		domErr error
+		events []*Event
+	)
+	doc.Find("h1").EachWithBreak(func(_ int, h1 *goquery.Selection) bool {
 
-			if h1.Text() != "Upcoming Special Events" {
-				return
+		if h1.Text() != "Upcoming Special Events" {
+			return true
+		}
+
+		h1.Siblings().EachWithBreak(func(_ int, p *goquery.Selection) bool {
+			href, ok := p.Find("a").First().Attr("href")
+			if !ok {
+				log.Printf("Yikes! Event did not have a tag! event=%s\n", h1.Text())
 			}
-			h1.Siblings().Each(func(_ int, p *goquery.Selection) {
-				href, ok := p.Find("a").First().Attr("href")
-				if !ok {
-					log.Printf("Yikes! Event did not have a tag! event=%s\n", h1.Text())
+
+			log.Printf("Fetching aczc.org event: %s\n", href)
+			resp, err := s.client.Get(href)
+			if err != nil {
+				domErr = err
+				return false
+			}
+
+			eventDoc, err := goquery.NewDocumentFromReader(resp.Body)
+			if err != nil {
+				domErr = err
+				return false
+			}
+
+			title := eventDoc.Find("h1.eventitem-title").Text()
+			log.Printf("title=%s\n", title)
+
+			desc := eventDoc.Find("div.sqs-block-content").Text()
+			log.Printf("desc=%s\n", desc)
+
+			date := eventDoc.Find("li.eventitem-meta-date time.event-date")
+
+			if date.Length() > 2 {
+				domErr = fmt.Errorf("Recived %d date items, no more than 2 expected", date.Length())
+				return false
+			}
+
+			var (
+				start time.Time
+				end   time.Time
+			)
+			date.EachWithBreak(func(i int, t *goquery.Selection) bool {
+				day, _ := t.Attr("datetime")
+				hour := t.SiblingsFiltered(".eventitem-meta-time").First().Find(".event-time-24hr").Text()
+
+				if len(hour) == 0 {
+					hour = "00:00"
 				}
 
-				log.Printf("Fetching aczc.org event: %s\n", href)
-				resp, err := s.client.Get(href)
+				//log.Printf("ok=%t\n", ok)
+				log.Printf("day=%s hour=%s\n", day, hour)
+
+				parsed, err := time.Parse(time.RFC3339, fmt.Sprintf("%sT%s:00-07:00", day, hour))
 				if err != nil {
-					errs <- err
-					return
+					domErr = err
+					return false
 				}
 
-				eventDoc, err := goquery.NewDocumentFromReader(resp.Body)
-				if err != nil {
-					errs <- err
-					return
+				if i == 0 {
+					start = parsed
+				} else {
+					end = parsed
 				}
-
-				title := eventDoc.Find("h1.eventitem-title").Text()
-				log.Printf("title=%s\n", title)
-
-				// a tag text = name
-				// href = website
-				// some are broken, have multiple a tags, but same link
-
-				// em = date
-				// easier to parse from url, probably
-
+				return true
 			})
-		})
-		close(errs)
-	}()
-	if err := <-errs; err != nil {
-		return nil, err
-	}
 
-	// TODO construct and return events
-	return nil, nil
+			// a tag text = name
+			// href = website
+			// some are broken, have multiple a tags, but same link
+
+			// em = date
+			// easier to parse from url, probably
+			e := &Event{
+				URL:   href,
+				Name:  title,
+				Desc:  desc,
+				Start: start,
+				End:   end,
+				Venue: s.venueMap["Angel City"], // XXX parse this from dom
+			}
+
+			log.Printf("event=%v\n", e)
+			events = append(events, e)
+
+			return true
+		})
+		if domErr != nil {
+			return false
+		}
+
+		return true
+	})
+
+	return events, domErr
 }
