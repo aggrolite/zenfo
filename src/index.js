@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global module */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
