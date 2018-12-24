@@ -2,11 +2,10 @@
 /* global module */
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-const title = 'zenfo.info';
+import App from './component/App';
 
 ReactDOM.render(
-  <div>{title}</div>,
+  <App />,
   document.getElementById('app')
 );
 

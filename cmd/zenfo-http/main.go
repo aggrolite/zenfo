@@ -18,8 +18,8 @@ var (
 func init() {
 	flag.IntVar(&port, "port", 8080, "HTTP port to listen on")
 	flag.BoolVar(&temp, "temp", false, "Show temporary 'coming soon' page")
-	flag.StringVar(&dbName, "dbname", os.Getenv("DBNAME"), "Postgres DB name")
-	flag.StringVar(&dbUser, "dbuser", os.Getenv("DBUSER"), "Postgres DB user")
+	flag.StringVar(&dbName, "dbname", "zenfo", "Postgres DB name")
+	flag.StringVar(&dbUser, "dbuser", "postgres", "Postgres DB user")
 	flag.Parse()
 
 	if len(dbName) == 0 {

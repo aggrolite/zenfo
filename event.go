@@ -6,6 +6,7 @@ import (
 
 // Event represents events for DB store and web API
 type Event struct {
+	ID    int       `json:"id"`
 	Name  string    `json:"name"`
 	Blurb string    `json:"blurb"`
 	Desc  string    `json:"desc"`

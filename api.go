@@ -12,29 +12,24 @@ import (
 
 // API provides HTTP endpoints for serving events
 type API struct {
-	Port       int
-	dbUser     string
-	dbName     string
-	comingSoon bool
+	Port   int
+	dbUser string
+	dbName string
 }
 
 // NewAPI returns new API object
 func NewAPI(dbUser, dbName string, port int, temp bool) (*API, error) {
 	return &API{
-		Port:       port,
-		dbUser:     dbUser,
-		dbName:     dbName,
-		comingSoon: temp,
+		Port:   port,
+		dbUser: dbUser,
+		dbName: dbName,
 	}, nil
 }
 
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
-	if api.comingSoon {
-		http.Handle("/", http.FileServer(FS(false)))
-	} else {
-		http.HandleFunc("/api/events", api.getEvents)
-	}
+	http.Handle("/", http.FileServer(FS(true)))
+	http.HandleFunc("/api/events", api.getEvents)
 	log.Printf("HTTP API listening on port %d\n", api.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", api.Port), nil)
 }
@@ -48,10 +43,19 @@ func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	q := "SELECT id, venue_id, name, blurb, description, start_date, end_date, url FROM events"
+
+	keys, ok := r.URL.Query()["id"]
+	if ok {
+		q = fmt.Sprintf("%s WHERE id=%s", q, keys[0])
+	}
+
+	q = fmt.Sprintf("%s ORDER BY start_date", q)
+
 	// Fetch events
-	rows, err := db.Query(`SELECT venue_id, name, blurb, description, start_date, end_date, url FROM events`)
+	rows, err := db.Query(q)
 	if err != nil {
-		log.Printf("url=%s err=%s\n", r.URL, err)
+		log.Printf("url=%s err=%s q=%s\n", r.URL, err, q)
 		http.Error(w, "Oops! Something went wrong!", http.StatusInternalServerError)
 		return
 	}
@@ -63,7 +67,7 @@ func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
 			venueID int
 			event   Event
 		)
-		if err := rows.Scan(&venueID, &event.Name, &event.Blurb, &event.Desc, &event.Start, &event.End, &event.URL); err != nil {
+		if err := rows.Scan(&event.ID, &venueID, &event.Name, &event.Blurb, &event.Desc, &event.Start, &event.End, &event.URL); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
