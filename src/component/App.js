@@ -1,11 +1,11 @@
 import React from 'react'
 
-import Calendar from './Calendar'
+import Menu from './Menu'
 
 class App extends React.Component {
   render() {
     return (
-      <Calendar />
+      <Menu />
     )
   }
 }

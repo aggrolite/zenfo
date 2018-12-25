@@ -1,8 +1,15 @@
 import React from 'react'
 import fetch from 'isomorphic-fetch'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
 class Event extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      events: [],
+    };
+  }
   componentDidMount() {
     const { id } = this.props.match.params
     fetch(`/api/events?id=${id}`)
@@ -11,8 +18,13 @@ class Event extends React.Component {
       })
   }
   render() {
+
+    const { events } = this.state;
+ 
     return (
-      <div>`blabla{this.props.match.params.id}`</div>
+      <div className="event">
+        <h1>{events[0].name}</h1>
+      </div>
     )
   }
 }
@@ -23,6 +35,7 @@ Event.propTypes = {
       id: PropTypes.string,
     })
   }),
+  history: PropTypes.string,
 }
 
 export default Event
