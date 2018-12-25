@@ -1,8 +1,28 @@
-# zenfo.info
+# Synopsis
 
-zenfo.info crawls Zen center websites for event information.
+Zen retreats sound fun, right? But how do you get involved? When is a retreat happening nearby? Is the retreat beginner friendly?
 
-Events are stored into a Postgres database, and served as JSON via HTTP.
+All of these questions (and more!) is what zenfo.info aims to answer. Unless you're actively involved in a community, it may be difficult to learn
+of new events going on near your area. Even if you are involved in a community, the events you hear of in person are usually just related
+to that specific group.
+
+What if you're traveling, and wish to attend a short retreat? Many Zen centers have websites, and some list events on a calendar page. However, some groups only notify of events in person or mailing list. Zen groups are typically low budget, and usually not too tech savvy. This is where zenfo.info comes in - simply visit the site to see a compiled list of events going on around the world.
+
+# Nitty Gritty
+
+There are three main pices:
+
+1. Crawlers
+
+The crawlers gather event information from a list of specific websites. Any information found is stored into Postgres.
+
+2. HTTP API
+
+A web server provides API endpoints to retreive event information.
+
+3. UI
+
+React frontend calls API to provide something useable on the browser.
 
 ## Sources
 
@@ -22,7 +42,11 @@ Sources are scraped by using the `Worker` interface. All workers share a common 
 
 ## Build / Install
 
-For now, simply run `make` to try it out. A Postgres instance is required to be running in the background using provided .psql schema.
+`make docker`
+
+`./run.sh`
+
+`make`
 
 ## License
 
