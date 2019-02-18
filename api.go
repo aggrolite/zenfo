@@ -28,13 +28,15 @@ func NewAPI(dbUser, dbName string, port int, temp bool) (*API, error) {
 
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
-	http.Handle("/", http.FileServer(FS(true)))
 	http.HandleFunc("/api/events", api.getEvents)
 	log.Printf("HTTP API listening on port %d\n", api.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", api.Port), nil)
 }
 
 func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", api.dbUser, api.dbName))
 	if err != nil {
 		log.Printf("url=%s err=%s\n", r.URL, err)
