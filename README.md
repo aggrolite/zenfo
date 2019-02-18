@@ -44,7 +44,7 @@ Sources are scraped by using the `Worker` interface. All workers share a common 
 
 `make docker`
 
-`./run.sh`
+`./setup.sh`
 
 `make`
 
