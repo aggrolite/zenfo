@@ -24,7 +24,7 @@ class Calendar extends React.Component {
   }
 
   componentDidMount() {
-    fetch("/api/events")
+    fetch("http://localhost:8081/api/events")
 		.then(response => {
            if (response.ok) {
              return response.json()
@@ -44,16 +44,27 @@ class Calendar extends React.Component {
     }
 
 	return (
-      <div>
+      <div className="calendar">
         <ul>
           {events.map(event =>
-            <li key={event.id}>
-              <Moment format="D MMM YYYY">
-                {event.start}
-              </Moment>
-              <Link to={"/e/" + event.id}>
-                {event.name} @ {event.venue.name}
-              </Link>
+            <li className="event" key={event.id}>
+              <div className="date">
+                <div className="day">
+                  <Moment format="D">{event.start}</Moment>
+                </div>
+                <div className="month">
+                  <Moment format="MMM">{event.start}</Moment>
+                </div>
+                <div className="year">
+                  <Moment format="YYYY">{event.start}</Moment>
+                </div>
+              </div>
+              <div className="overview">
+                <Link to={"/e/" + event.id} className="title">
+                  {event.name}
+                </Link>
+                <div className="venue">{event.venue.name}</div>
+              </div>
             </li>
           )}
         </ul>

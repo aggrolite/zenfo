@@ -7,23 +7,39 @@ class Event extends React.Component {
     super(props);
 
     this.state = {
-      events: [],
+      event: {},
+      loading: false,
+      error: null,
     };
   }
   componentDidMount() {
     const { id } = this.props.match.params
-    fetch(`/api/events?id=${id}`)
-      .then((events) => {
-        this.setState(() => ({ events }))
+    fetch(`http://localhost:8081/api/events?id=${id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Failed to fetch event')
+        }
       })
+      .then(data => this.setState({ event: data.length > 0 ? data[0] : {} }))
+      .catch(error => this.setState({ error: error, loading: false }))
   }
   render() {
 
-    const { events } = this.state;
- 
+    const { event } = this.state;
+
+    //console.log(events)
+
     return (
       <div className="event">
-        <h1>{events[0].name}</h1>
+        <h1>{event.name}</h1>
+        <div className="blurb">
+          {event.blurb}
+        </div>
+        <div className="desc">
+          {event.desc}
+        </div>
       </div>
     )
   }
@@ -35,7 +51,7 @@ Event.propTypes = {
       id: PropTypes.string,
     })
   }),
-  history: PropTypes.string,
+  history: PropTypes.object,
 }
 
 export default Event
