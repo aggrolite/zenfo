@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const Copy = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -25,12 +26,15 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new Copy([
+      // relative path is from src
+      { from: './static/favicon.ico' }, // <- your path to favicon
+    ]),
   ],
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 8080,
+    compress: true, port: 8080,
     historyApiFallback: true,
     publicPath: "/"
   }
