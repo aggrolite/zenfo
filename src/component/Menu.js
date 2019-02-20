@@ -7,8 +7,8 @@ class Menu extends React.Component {
      <div className="menu">
        <ul>
          <li>zenfo.info</li>
-         <li><Link to="/">{">home"}</Link></li>
-         <li><Link to="/about">{">about"}</Link></li>
+         <li><Link to="/">home</Link></li>
+         <li><Link to="/about">about</Link></li>
        </ul>
      </div>
     )
