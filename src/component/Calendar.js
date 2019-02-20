@@ -1,6 +1,7 @@
 import React from 'react'
 import Moment from 'react-moment'
 import fetch from 'isomorphic-fetch'
+import Promise from 'es6-promise'
 import { Link } from 'react-router-dom'
 
 //import Event from './Event'
@@ -18,26 +19,28 @@ class Calendar extends React.Component {
 
     this.state = {
       events: [],
+      venues: [],
       loading: false,
       error: null,
     };
   }
 
   componentDidMount() {
-    fetch("http://localhost:8081/api/events")
-		.then(response => {
-           if (response.ok) {
-             return response.json()
-           } else {
-             throw new Error('Failed to fetch events')
-           }
-        })
-		.then(data => this.setState({ events: data }))
-		.catch(error => this.setState({ error: error, loading: false }));
+      this.setState({loading: true});
+      Promise.all([
+        fetch("http://localhost:8081/api/events").then((resp) => resp.json()),
+        fetch("http://localhost:8081/api/venues").then((resp) => resp.json())
+      ]).then(resp => {
+        this.setState({
+          events: resp[0],
+          venues: resp[1],
+          loading: false
+        });
+      })
   }
   render() {
 
-    const { events, loading } = this.state;
+    const { events, venues, loading } = this.state;
 
     if (loading) {
       return <p>Loading...</p>
@@ -45,6 +48,14 @@ class Calendar extends React.Component {
 
 	return (
       <div className="calendar">
+        <div className="venues">
+          {venues.map(venue =>
+              <div className="venue" key={venue.id}>
+                <input type="checkbox" checked={true}/>
+                <label htmlFor={venue.id}>{venue.name}</label>
+              </div>
+          )}
+        </div>
         <ul>
           {events.map(event =>
             <li className="event" key={event.id}>
