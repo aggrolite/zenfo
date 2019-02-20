@@ -2,6 +2,7 @@ package zenfo
 
 // Venue represents a venue entry for DB store and web API
 type Venue struct {
+	ID      int     `json:"id"`
 	Name    string  `json:"name"`
 	Addr    string  `json:"addr"`
 	Lat     float32 `json:"lat"`

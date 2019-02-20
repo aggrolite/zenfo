@@ -37,6 +37,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer api.Close()
 
 	if err := api.Run(); err != nil {
 		log.Fatal(err)
