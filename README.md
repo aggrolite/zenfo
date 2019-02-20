@@ -1,4 +1,6 @@
-# Synopsis
+# zenfo.info
+
+![screen](screenshot.png)
 
 Zen retreats sound fun, right? But how do you get involved? When is a retreat happening nearby? Is the retreat beginner friendly?
 
