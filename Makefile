@@ -5,15 +5,15 @@ all: build http
 http:
 	zenfo-http -dbname zenfo -dbuser postgres
 
-build: fmt lint vet db
+build: fmt lint vet
 	go clean -i
 	go install ./...
-	zenfo-build -dbname zenfo -dbuser postgres
 
 db:
 	dropdb zenfo --if-exists
 	createdb zenfo
 	psql zenfo < zenfo.psql
+	zenfo-build -dbname zenfo -dbuser postgres
 
 vet:
 	go vet $(GO_PKG_DIRS)
