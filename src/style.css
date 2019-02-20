@@ -9,6 +9,7 @@ body {
 
 ul {
   list-style-type: none;
+  padding-left: 0;
 }
 
 .menu {
@@ -18,7 +19,11 @@ ul {
 }
 
 .menu a {
-color: hotpink;
+  color: hotpink;
+}
+
+.venue label {
+  color: hotpink;
 }
 
 .menu ul {
@@ -31,17 +36,18 @@ color: hotpink;
 }
 
 .calendar li {
-  padding: 20px 0;
+  padding: 20px 10px;
 }
 
 .event:nth-child(even) {
-background:rgba(0,0,0,0.1);
+  background:rgba(0,0,0,0.1);
 }
 
 .event {
   display: grid;
-  grid-template-columns: 50px auto;
+  grid-template-columns: 60px auto;
   grid-template-rows: auto;
+  align-content: start;
 }
 
 .event .date {
@@ -50,12 +56,10 @@ background:rgba(0,0,0,0.1);
   grid-column-end: 1;
   grid-row-start: 1;
   grid-row-end: 1;
+  justify-self: start;
 }
 
 .event .overview {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-left: 10px;
   grid-column-start: 2;
   grid-column-end: 2;
   grid-row-start: 1;
