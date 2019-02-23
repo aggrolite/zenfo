@@ -92,6 +92,9 @@ func (s *Sfzc) Events() ([]*Event, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&events); err != nil {
 		return nil, err
 	}
+	if len(events) == 0 {
+		return nil, errors.New("No events found")
+	}
 
 	var final []*Event
 	for _, e := range events {
@@ -115,7 +118,10 @@ func (s *Sfzc) Events() ([]*Event, error) {
 		}
 		u := fmt.Sprintf("%s%s", link, e.URL)
 
-		venue, ok := s.venueMap[e.Location]
+		// I've seen "Green  Gulch" before
+		cleanLocation := cleanWhiteSpace(e.Location)
+
+		venue, ok := s.venueMap[cleanLocation]
 		if !ok {
 			return nil, fmt.Errorf("Failed to match venue for '%s' - event=%+v", e.Location, e)
 		}
