@@ -2,7 +2,8 @@ package zenfo
 
 // Worker provides interface for plugin-like crawlers per source
 type Worker interface {
-	Init(*Client) error
+	Name() string
+	Init(*Client, chan string) error
 	Desc() string
 	Events() ([]*Event, error)
 }

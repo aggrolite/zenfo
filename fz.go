@@ -12,25 +12,31 @@ import (
 type Fz struct {
 	venueMap map[string]*Venue
 	client   *Client
+	log      chan string
+}
+
+// Name return human-friendly name for worker for logs
+func (f *Fz) Name() string {
+	return "Floating Zendo (floatingzendo.org)"
 }
 
 // Init sets HTTP client and defines internal venue map
-func (s *Fz) Init(client *Client) error {
-	s.client = client
-	s.venueMap = make(map[string]*Venue)
+func (f *Fz) Init(client *Client, log chan string) error {
+	f.client = client
+	f.venueMap = make(map[string]*Venue)
 
 	return nil
 }
 
 // Desc returns description for website crawled
-func (s *Fz) Desc() string {
+func (f *Fz) Desc() string {
 	return "Floating Zendo (floatingzendo.org)"
 }
 
 // Events hits floating zendo events page and returns slice of Event types
 // http://www.floatingzendo.org/events/
-func (s *Fz) Events() ([]*Event, error) {
-	resp, err := s.client.Get("https://www.aczc.org/schedule/")
+func (f *Fz) Events() ([]*Event, error) {
+	resp, err := f.client.Get("https://www.aczc.org/schedule/")
 	if err != nil {
 		return nil, err
 	}

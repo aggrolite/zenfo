@@ -9,7 +9,6 @@ package zenfo
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -19,14 +18,21 @@ import (
 type Aczc struct {
 	venueMap map[string]*Venue
 	client   *Client
+	log      chan string
+}
+
+// Name return human-friendly name for worker for logs
+func (a *Aczc) Name() string {
+	return "Angel City Zen Center (aczc.org)"
 }
 
 // Init sets HTTP client and defines internal venue map
-func (s *Aczc) Init(client *Client) error {
-	s.client = client
-	s.venueMap = make(map[string]*Venue)
+func (a *Aczc) Init(client *Client, log chan string) error {
+	a.client = client
+	a.log = log
+	a.venueMap = make(map[string]*Venue)
 
-	s.venueMap["Angel City"] = &Venue{
+	a.venueMap["Angel City"] = &Venue{
 		Name:    "Angel City Zen Center",
 		Addr:    "1407 W 2nd St Los Angeles, CA 90026",
 		Phone:   "+1 (323) 426-6269",
@@ -35,7 +41,7 @@ func (s *Aczc) Init(client *Client) error {
 		Lng:     -118.260530,
 		Website: "https://aczc.org",
 	}
-	s.venueMap["Mount Baldy"] = &Venue{
+	a.venueMap["Mount Baldy"] = &Venue{
 		Name:    "Mount Baldy Zen Center",
 		Addr:    "7901 Mount Baldy Road, Mount Baldy, CA 91759",
 		Phone:   "+1 (909) 985-6410",
@@ -44,20 +50,21 @@ func (s *Aczc) Init(client *Client) error {
 		Lng:     -117.632916,
 		Website: "http://mbzc.org",
 	}
+	a.log <- "Initialized!"
 
 	return nil
 }
 
 // Desc returns description for website crawled
-func (s *Aczc) Desc() string {
+func (a *Aczc) Desc() string {
 	return "Angel City Zen Center (aczc.org)"
 }
 
 // Events hits aczc events page and returns slice of Event types
 // https://www.aczc.org/schedule/
-func (s *Aczc) Events() ([]*Event, error) {
+func (a *Aczc) Events() ([]*Event, error) {
 
-	resp, err := s.client.Get("https://www.aczc.org/schedule/")
+	resp, err := a.client.Get("https://www.aczc.org/schedule/")
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +88,11 @@ func (s *Aczc) Events() ([]*Event, error) {
 		h1.Siblings().EachWithBreak(func(_ int, p *goquery.Selection) bool {
 			href, ok := p.Find("a").First().Attr("href")
 			if !ok {
-				log.Printf("Yikes! Event did not have a tag! event=%s\n", h1.Text())
+				a.log <- fmt.Sprintf("Yikes! Event did not have a tag! event=%s", h1.Text())
 			}
 
-			log.Printf("Fetching aczc.org event: %s\n", href)
-			resp, err := s.client.Get(href)
+			a.log <- fmt.Sprintf("Fetching event: %s", href)
+			resp, err := a.client.Get(href)
 			if err != nil {
 				domErr = err
 				return false
@@ -98,10 +105,9 @@ func (s *Aczc) Events() ([]*Event, error) {
 			}
 
 			title := eventDoc.Find("h1.eventitem-title").Text()
-			log.Printf("title=%s\n", title)
 
 			desc := eventDoc.Find("div.sqs-block-content").Text()
-			log.Printf("desc=%s\n", desc)
+			//a.log <- fmt.Sprintf("title=%s desc=%s", title, desc)
 
 			date := eventDoc.Find("li.eventitem-meta-date time.event-date")
 
@@ -123,7 +129,7 @@ func (s *Aczc) Events() ([]*Event, error) {
 				}
 
 				//log.Printf("ok=%t\n", ok)
-				log.Printf("day=%s hour=%s\n", day, hour)
+				//log.Printf("day=%s hour=%s\n", day, hour)
 
 				parsed, err := time.Parse(time.RFC3339, fmt.Sprintf("%sT%s:00-07:00", day, hour))
 				if err != nil {
@@ -151,14 +157,15 @@ func (s *Aczc) Events() ([]*Event, error) {
 				Desc:  desc,
 				Start: start,
 				End:   end,
-				Venue: s.venueMap["Angel City"], // XXX parse this from dom
+				Venue: a.venueMap["Angel City"], // XXX parse this from dom
 			}
 
-			log.Printf("event=%v\n", e)
+			a.log <- fmt.Sprintf("Found event: %s", e.Name)
 			events = append(events, e)
 
 			return true
 		})
+		a.log <- fmt.Sprintf("Found %d total events", len(events))
 		if domErr != nil {
 			return false
 		}

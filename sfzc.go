@@ -14,6 +14,7 @@ import (
 type Sfzc struct {
 	venueMap map[string]*Venue
 	client   *Client
+	log      chan string
 }
 
 type eventJSON struct {
@@ -37,11 +38,17 @@ func html2text(html string) (string, error) {
 	return strings.TrimSpace(out), nil
 }
 
+// Name return human-friendly name for worker for logs
+func (s *Sfzc) Name() string {
+	return "San Francisco Zen Center (sfzc.org)"
+}
+
 // Init sets HTTP client and defines internal venue map
-func (s *Sfzc) Init(client *Client) error {
+func (s *Sfzc) Init(client *Client, log chan string) error {
 
 	s.client = client
 	s.venueMap = make(map[string]*Venue)
+	s.log = log
 
 	s.venueMap["City Center"] = &Venue{
 		Name:    "San Francisco Zen Center",
@@ -71,6 +78,8 @@ func (s *Sfzc) Init(client *Client) error {
 		Website: "http://sfzc.org/green-gulch",
 	}
 	s.venueMap["Online"] = s.venueMap["City Center"]
+
+	s.log <- "Initialized!"
 
 	return nil
 }
@@ -135,9 +144,11 @@ func (s *Sfzc) Events() ([]*Event, error) {
 			URL:   u,
 			Venue: venue,
 		}
+		s.log <- fmt.Sprintf("Found event: %s", e.Name)
 
 		final = append(final, finalEvent)
 	}
+	s.log <- fmt.Sprintf("Found %d total events", len(final))
 
 	return final, nil
 }
