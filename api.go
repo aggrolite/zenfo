@@ -14,31 +14,45 @@ import (
 type API struct {
 	Port int
 	dbh  *sql.DB
+	temp bool
+	cert string
+	key  string
 }
 
 // NewAPI returns new API object
-func NewAPI(dbUser, dbName string, port int, temp bool) (*API, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", dbUser, dbName))
-	if err != nil {
-		return nil, err
-	}
-	return &API{
+func NewAPI(dbUser, dbName, cert, key string, port int, temp bool) (*API, error) {
+	a := &API{
 		Port: port,
-		dbh:  db,
-	}, nil
+		temp: temp,
+		cert: cert,
+		key:  key,
+	}
+	if !a.temp {
+		db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", dbUser, dbName))
+		if err != nil {
+			return nil, err
+		}
+		a.dbh = db
+	}
+	return a, nil
 }
 
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
+	http.HandleFunc("/__health", api.getHealth)
 	http.HandleFunc("/api/events", api.getEvents)
 	http.HandleFunc("/api/venues", api.getVenues)
 	log.Printf("HTTP API listening on port %d\n", api.Port)
-	return http.ListenAndServe(fmt.Sprintf(":%d", api.Port), nil)
+
+	return http.ListenAndServeTLS(fmt.Sprintf(":%d", api.Port), api.cert, api.key, nil)
 }
 
 // Close closes DB handler
 func (api *API) Close() error {
-	return api.dbh.Close()
+	if api.temp {
+		return api.dbh.Close()
+	}
+	return nil
 }
 
 func (api *API) getVenues(w http.ResponseWriter, r *http.Request) {
@@ -68,6 +82,10 @@ func (api *API) getVenues(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(venues)
+}
+
+func (api *API) getHealth(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "OK")
 }
 
 func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
