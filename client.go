@@ -2,6 +2,7 @@ package zenfo
 
 import (
 	"net/http"
+	"time"
 )
 
 // Client wraps http.Client for custom UA string, Getting, etc.
@@ -13,7 +14,9 @@ type Client struct {
 // NewClient returns new Client object
 func NewClient() *Client {
 	c := new(Client)
-	c.client = &http.Client{}
+	c.client = &http.Client{
+		Timeout: time.Second * 10,
+	}
 	return c
 }
 
