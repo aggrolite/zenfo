@@ -9,10 +9,13 @@ build: fmt lint vet
 	go clean -i
 	go install ./...
 
-db:
+init setup:
+	./setup.sh
 	dropdb zenfo --if-exists
 	createdb zenfo
 	psql zenfo < zenfo.psql
+
+make db:
 	zenfo-build -dbname zenfo -dbuser postgres
 
 vet:
