@@ -28,8 +28,8 @@ class Calendar extends React.Component {
   componentDidMount() {
       this.setState({loading: true});
       Promise.all([
-        fetch("http://localhost:8081/api/events").then((resp) => resp.json()),
-        fetch("http://localhost:8081/api/venues").then((resp) => resp.json())
+        fetch("https://zenfo.info/api/events").then((resp) => resp.json()),
+        fetch("https://zenfo.info/api/venues").then((resp) => resp.json())
       ]).then(resp => {
         this.setState({
           events: resp[0],
