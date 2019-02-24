@@ -12,6 +12,8 @@ RUN \
 	gcc \
 	ca-certificates \
 	build-essential \
+	dnsutils \
+	less \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN \
@@ -42,6 +44,7 @@ RUN echo $GOPATH
 RUN \
 	#mkdir -p $GOPATH && \
 	go get golang.org/x/lint/golint && \
+	go get github.com/mjibson/esc && \
 	chmod -R o+rwx $GOPATH
 
 RUN ls -ltr /usr/lib/postgresql
