@@ -11,13 +11,13 @@ import (
 var (
 	dbName   string
 	dbUser   string
-	temp     bool
+	dev      bool
 	certPath string
 	keyPath  string
 )
 
 func init() {
-	flag.BoolVar(&temp, "temp", false, "Show temporary 'coming soon' page")
+	flag.BoolVar(&dev, "dev", false, "Toggle development mode")
 	flag.StringVar(&dbName, "dbname", "zenfo", "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", "postgres", "Postgres DB user")
 	flag.StringVar(&certPath, "cert", "", "Path to SSL cert file")
@@ -32,18 +32,21 @@ func init() {
 		flag.Usage()
 		os.Exit(2)
 	}
-	if len(certPath) == 0 {
-		flag.Usage()
-		os.Exit(2)
-	}
-	if len(keyPath) == 0 {
-		flag.Usage()
-		os.Exit(2)
+
+	if !dev {
+		if len(certPath) == 0 {
+			flag.Usage()
+			os.Exit(2)
+		}
+		if len(keyPath) == 0 {
+			flag.Usage()
+			os.Exit(2)
+		}
 	}
 }
 
 func main() {
-	api, err := zenfo.NewAPI(dbUser, dbName, certPath, keyPath, temp)
+	api, err := zenfo.NewAPI(dbUser, dbName, certPath, keyPath, dev)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -12,20 +12,20 @@ import (
 
 // API provides HTTP endpoints for serving events
 type API struct {
+	dev  bool
 	dbh  *sql.DB
-	temp bool
 	cert string
 	key  string
 }
 
 // NewAPI returns new API object
-func NewAPI(dbUser, dbName, cert, key string, temp bool) (*API, error) {
+func NewAPI(dbUser, dbName, cert, key string, dev bool) (*API, error) {
 	a := &API{
-		temp: temp,
+		dev:  dev,
 		cert: cert,
 		key:  key,
 	}
-	if !a.temp {
+	if !a.dev {
 		db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", dbUser, dbName))
 		if err != nil {
 			return nil, err
@@ -42,6 +42,11 @@ func (api *API) Run() error {
 	http.HandleFunc("/api/events", api.getEvents)
 	http.HandleFunc("/api/venues", api.getVenues)
 
+	// Dev mode only runs on http
+	if api.dev {
+		return api.runDev()
+	}
+
 	go func() {
 		p := 8081
 		log.Printf("HTTP->HTTPS listening on port %d\n", p)
@@ -50,7 +55,25 @@ func (api *API) Run() error {
 
 	p := 8082
 	log.Printf("HTTPS API listening on port %d\n", p)
+
+	// Firefox is strict
+	// https://godoc.org/net/http#ListenAndServeTLS
+	// If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate, any intermediates, and the CA's certificate.
 	return http.ListenAndServeTLS(fmt.Sprintf(":%d", p), api.cert, api.key, nil)
+}
+
+func (api *API) runDev() error {
+	p := 8081
+	return http.ListenAndServe(fmt.Sprintf(":%d", p), nil)
+}
+
+func (api *API) setHeaders(h http.Header) {
+	h.Set("Content-Type", "application/json")
+	if api.dev {
+		h.Set("Access-Control-Allow-Origin", "*")
+	} else {
+		h.Set("Access-Control-Allow-Origin", "https://zenfo.info")
+	}
 }
 
 func (api *API) redirect(w http.ResponseWriter, req *http.Request) {
@@ -60,14 +83,14 @@ func (api *API) redirect(w http.ResponseWriter, req *http.Request) {
 
 // Close closes DB handler
 func (api *API) Close() error {
-	if api.temp {
+	if api.dev {
 		return api.dbh.Close()
 	}
 	return nil
 }
 
 func (api *API) getVenues(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	api.setHeaders(w.Header())
 
 	q := "SELECT id, name, geo[0], geo[1], website, phone, email FROM venues"
 
@@ -100,8 +123,7 @@ func (api *API) getHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	api.setHeaders(w.Header())
 
 	q := "SELECT id, venue_id, name, blurb, description, start_date, end_date, url FROM events"
 
