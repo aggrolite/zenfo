@@ -207,7 +207,7 @@ dps106oXB6bKOuuSuD39qd63aTfTqjwzyZUxXd6Orm/ubRx09rdkuX8PAAD//yhkp68AMAAA
 	"/bundle.js": {
 		local:   "dist/bundle.js",
 		size:    480692,
-		modtime: 1550970085,
+		modtime: 1550971217,
 		compressed: `
 H4sIAAAAAAAC/8y9D3fTOLMw/lUS/ZZcCSuuU0pZXEQOS4GyS4DdlmVLmqfHjZXG20Tu2kpLqXM/++9o
 JNly4pTyPPe977vsaax/o9G/0Wg0M2pPFmIsk1RgTm6voqwl2XUi4vTav+Znl9H44iCVny7jSPK9DfGs
@@ -4554,7 +4554,7 @@ j6ht2/NsW0XLp4m6lIOBKweDOF+0pTlkqAQX1tsKwji2jnzS3lL4TzwgTNb+z304iP8LAAD//9xIhjAM
 	"/favicon.ico": {
 		local:   "dist/favicon.ico",
 		size:    15406,
-		modtime: 1550970085,
+		modtime: 1550971217,
 		compressed: `
 H4sIAAAAAAAC/+ybWVBUWZ7GmZ6OiX7siah5r6caqxREQFBREJdaLKu7rLEmetqe6Yopo9uurVvRKgtK
 RUUQFFlEQPYdZAfZ933fd0RENkFILSFJkv2b+E5yL5mQruXUPEyfiC88nPP//79fZt689+Y5VwODfzD4
@@ -4656,12 +4656,12 @@ ffbn7+3v7WXb/wQAAP//idluty48AAA=
 
 	"/index.html": {
 		local:   "dist/index.html",
-		size:    167,
-		modtime: 1550970076,
+		size:    164,
+		modtime: 1550970411,
 		compressed: `
-H4sIAAAAAAAC/zSOMQ7CMAxFd05hcoD4Am4WYIaBhbGtU2oUkqgJlejpUeQy2fJ/fvp0PF9P98ftAnN9
-B3cgHQA0+57bAkBVavBu83FKVuKUCPXSMPxzNCT+7g8sKwh3ps/ZOEKWdQ/KuEiuUJaxMxaHT+Tg7avY
-59Y4TVWrNkLt8wsAAP//wfZYracAAAA=
+H4sIAAAAAAAC/zSOMQ7CMAxFd05hcoD4Am4WYIaBhbGtU9UoJFETKsHpUeQw2fJ/fvp0PF9P98ftAmt9
+BXcgHQC0+pHbAkBVavDu6+OSrMQlEeqlYfjnaEr86Q8sOwgPZszZOEKWvQdl3iRXKNs8GIvTO3Lw9lka
+pJE6VUWoZX4BAAD//whgwy+kAAAA
 `,
 	},
 
