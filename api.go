@@ -42,9 +42,20 @@ func (api *API) Run() error {
 	http.HandleFunc("/__health", api.getHealth)
 	http.HandleFunc("/api/events", api.getEvents)
 	http.HandleFunc("/api/venues", api.getVenues)
-	log.Printf("HTTP API listening on port %d\n", api.Port)
 
+	go func() {
+		p := 80
+		log.Printf("HTTP->HTTPS listening on port %d\n", p)
+		http.ListenAndServe(fmt.Sprintf(":%d", 80), http.HandlerFunc(api.redirect))
+	}()
+
+	log.Printf("HTTPS API listening on port %d\n", api.Port)
 	return http.ListenAndServeTLS(fmt.Sprintf(":%d", api.Port), api.cert, api.key, nil)
+}
+
+func (api *API) redirect(w http.ResponseWriter, req *http.Request) {
+	redir := fmt.Sprintf("https://%s%s", req.Host, req.URL)
+	http.Redirect(w, req, redir, http.StatusMovedPermanently)
 }
 
 // Close closes DB handler

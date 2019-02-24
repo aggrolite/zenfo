@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	flag.IntVar(&port, "port", 8081, "HTTP port to listen on")
+	flag.IntVar(&port, "port", 443, "HTTP port to listen on")
 	flag.BoolVar(&temp, "temp", false, "Show temporary 'coming soon' page")
 	flag.StringVar(&dbName, "dbname", "zenfo", "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", "postgres", "Postgres DB user")
