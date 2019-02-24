@@ -39,7 +39,8 @@ dbuild:
 docker:
 	docker run --rm -it \
 	-e POSTGRES_PASSWORD=secret \
-	-p 8081:8081 \
+	-p 80:8081 \
+	-p 443:8082 \
 	-v $$(pwd):/code \
 	-w /code \
 	zenfo:v1 \
