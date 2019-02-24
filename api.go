@@ -1,4 +1,4 @@
-//go:generate esc -o static.go -pkg zenfo -prefix static static
+//go:generate esc -o static.go -pkg zenfo -prefix dist dist
 
 package zenfo
 
@@ -39,6 +39,7 @@ func NewAPI(dbUser, dbName, cert, key string, port int, temp bool) (*API, error)
 
 // Run starts web server to listen on configured port
 func (api *API) Run() error {
+	http.Handle("/", http.FileServer(FS(false)))
 	http.HandleFunc("/__health", api.getHealth)
 	http.HandleFunc("/api/events", api.getEvents)
 	http.HandleFunc("/api/venues", api.getVenues)
