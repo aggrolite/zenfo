@@ -7,6 +7,7 @@ http:
 
 build: fmt lint vet
 	go clean -i
+	go generate
 	go install ./...
 
 init setup:
@@ -14,6 +15,10 @@ init setup:
 	dropdb zenfo --if-exists
 	createdb zenfo
 	psql zenfo < zenfo.psql
+
+release:
+	npm run build
+	make build
 
 make db:
 	zenfo-build -dbname zenfo -dbuser postgres
