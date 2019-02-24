@@ -12,7 +12,6 @@ import (
 
 // API provides HTTP endpoints for serving events
 type API struct {
-	Port int
 	dbh  *sql.DB
 	temp bool
 	cert string
@@ -20,9 +19,8 @@ type API struct {
 }
 
 // NewAPI returns new API object
-func NewAPI(dbUser, dbName, cert, key string, port int, temp bool) (*API, error) {
+func NewAPI(dbUser, dbName, cert, key string, temp bool) (*API, error) {
 	a := &API{
-		Port: port,
 		temp: temp,
 		cert: cert,
 		key:  key,
@@ -45,13 +43,14 @@ func (api *API) Run() error {
 	http.HandleFunc("/api/venues", api.getVenues)
 
 	go func() {
-		p := 80
+		p := 8081
 		log.Printf("HTTP->HTTPS listening on port %d\n", p)
-		http.ListenAndServe(fmt.Sprintf(":%d", 80), http.HandlerFunc(api.redirect))
+		http.ListenAndServe(fmt.Sprintf(":%d", p), http.HandlerFunc(api.redirect))
 	}()
 
-	log.Printf("HTTPS API listening on port %d\n", api.Port)
-	return http.ListenAndServeTLS(fmt.Sprintf(":%d", api.Port), api.cert, api.key, nil)
+	p := 8082
+	log.Printf("HTTPS API listening on port %d\n", p)
+	return http.ListenAndServeTLS(fmt.Sprintf(":%d", p), api.cert, api.key, nil)
 }
 
 func (api *API) redirect(w http.ResponseWriter, req *http.Request) {

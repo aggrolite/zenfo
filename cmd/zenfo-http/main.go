@@ -11,14 +11,12 @@ import (
 var (
 	dbName   string
 	dbUser   string
-	port     int
 	temp     bool
 	certPath string
 	keyPath  string
 )
 
 func init() {
-	flag.IntVar(&port, "port", 443, "HTTP port to listen on")
 	flag.BoolVar(&temp, "temp", false, "Show temporary 'coming soon' page")
 	flag.StringVar(&dbName, "dbname", "zenfo", "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", "postgres", "Postgres DB user")
@@ -45,7 +43,7 @@ func init() {
 }
 
 func main() {
-	api, err := zenfo.NewAPI(dbUser, dbName, certPath, keyPath, port, temp)
+	api, err := zenfo.NewAPI(dbUser, dbName, certPath, keyPath, temp)
 	if err != nil {
 		log.Fatal(err)
 	}
