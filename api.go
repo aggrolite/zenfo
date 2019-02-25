@@ -1,4 +1,4 @@
-//go:generate esc -o static.go -pkg zenfo -prefix dist dist
+//go:generate esc -o static.go -pkg zenfo -prefix dist -ignore .*\.sw.* dist
 
 package zenfo
 
