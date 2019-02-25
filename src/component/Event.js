@@ -1,6 +1,7 @@
 import React from 'react'
 import fetch from 'isomorphic-fetch'
 import PropTypes from 'prop-types'
+import API from '../constants/api'
 
 class Event extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ class Event extends React.Component {
   }
   componentDidMount() {
     const { id } = this.props.match.params
-    fetch(`https://zenfo.info/api/events?id=${id}`)
+    fetch(API.BASE_URL + `/events?id=${id}`)
       .then(response => {
         if (response.ok) {
           return response.json()

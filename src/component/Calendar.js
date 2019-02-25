@@ -3,6 +3,7 @@ import Moment from 'react-moment'
 import fetch from 'isomorphic-fetch'
 import Promise from 'es6-promise'
 import { Link } from 'react-router-dom'
+import API from '../constants/api'
 
 //import Event from './Event'
 
@@ -28,8 +29,8 @@ class Calendar extends React.Component {
   componentDidMount() {
       this.setState({loading: true});
       Promise.all([
-        fetch("https://zenfo.info/api/events").then((resp) => resp.json()),
-        fetch("https://zenfo.info/api/venues").then((resp) => resp.json())
+        fetch(API.BASE_URL + "/events").then((resp) => resp.json()),
+        fetch(API.BASE_URL + "/venues").then((resp) => resp.json())
       ]).then(resp => {
         this.setState({
           events: resp[0],
