@@ -37,7 +37,7 @@ func NewAPI(dbUser, dbName, cert, key string, dev bool) (*API, error) {
 	q := "SELECT id, venue_id, name, blurb, description, start_date, end_date, url FROM events"
 
 	var stmtErr error
-	a.eventsAllStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s LIMIT 20", q))
+	a.eventsAllStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s ORDER BY start_date LIMIT 20", q))
 	if stmtErr != nil {
 		return nil, stmtErr
 	}
@@ -45,7 +45,7 @@ func NewAPI(dbUser, dbName, cert, key string, dev bool) (*API, error) {
 	if stmtErr != nil {
 		return nil, stmtErr
 	}
-	a.eventsAfterStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s WHERE start_date > $1 LIMIT 20", q))
+	a.eventsAfterStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s WHERE start_date > $1 ORDER BY start_date LIMIT 20", q))
 	if stmtErr != nil {
 		return nil, stmtErr
 	}
