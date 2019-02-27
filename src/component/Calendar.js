@@ -16,28 +16,58 @@ import API from '../constants/api'
 class Calendar extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
+    this.onScroll = this.onScroll.bind(this)
 
     this.state = {
       events: [],
       venues: [],
       loading: false,
       error: null,
-    };
+    }
   }
 
-  componentDidMount() {
+  onScroll() {
+
+    const {
+      loading,
+      events,
+    } = this.state;
+
+    if (loading) return;
+    var lastLi = document.querySelector("ul > li.event:last-child");
+    var lastLiOffset = lastLi.offsetTop + lastLi.clientHeight;
+    var pageOffset = window.pageYOffset + window.innerHeight;
+    if (pageOffset > lastLiOffset) {
+      let start = events.slice(-1)[0].start
+      this.loadEvents(start)
+    }
+
+  }
+
+  loadEvents(after) {
+
+    let eventsURL = API.BASE_URL + "/events"
+    if (after) {
+      eventsURL = eventsURL + "?after=" + after
+    }
       this.setState({loading: true});
       Promise.all([
-        fetch(API.BASE_URL + "/events").then((resp) => resp.json()),
+        fetch(eventsURL).then((resp) => resp.json()),
         fetch(API.BASE_URL + "/venues").then((resp) => resp.json())
       ]).then(resp => {
+        var newEvents = this.state.events.slice().concat(resp[0])
         this.setState({
-          events: resp[0],
+          events: newEvents,
           venues: resp[1],
           loading: false
         });
       })
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.onScroll, false);
+    this.loadEvents()
   }
   render() {
 
