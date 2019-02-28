@@ -50,7 +50,7 @@ func (s *Sfzc) Init(client *Client, log chan string) error {
 	s.venueMap = make(map[string]*Venue)
 	s.log = log
 
-	s.venueMap["City Center"] = &Venue{
+	s.venueMap["city center"] = &Venue{
 		Name:    "San Francisco Zen Center",
 		Addr:    "300 Page St, San Francisco, CA 94102",
 		Phone:   "+1 (415) 863-3136",
@@ -59,7 +59,7 @@ func (s *Sfzc) Init(client *Client, log chan string) error {
 		Lng:     -122.426153,
 		Website: "https://sfzc.org",
 	}
-	s.venueMap["Tassajara"] = &Venue{
+	s.venueMap["tassajara"] = &Venue{
 		Name:    "Tassajra Zen Mountain Center",
 		Addr:    "39171 Tassajara Road, Carmel Valley, CA 93924",
 		Phone:   "+1 (831) 659-2229",
@@ -68,7 +68,7 @@ func (s *Sfzc) Init(client *Client, log chan string) error {
 		Lng:     -121.550031,
 		Website: "http://sfzc.org/tassajara",
 	}
-	s.venueMap["Green Gulch"] = &Venue{
+	s.venueMap["green gulch"] = &Venue{
 		Name:    "Green Gulch Farm Zen Center",
 		Addr:    "1601 Shoreline Highway, Muir Beach, CA 94965",
 		Phone:   "+1 (415) 383-3134",
@@ -77,7 +77,7 @@ func (s *Sfzc) Init(client *Client, log chan string) error {
 		Lng:     -122.563911,
 		Website: "http://sfzc.org/green-gulch",
 	}
-	s.venueMap["Online"] = s.venueMap["City Center"]
+	s.venueMap["online"] = s.venueMap["City Center"]
 
 	s.log <- "Initialized!"
 
@@ -128,7 +128,7 @@ func (s *Sfzc) Events() ([]*Event, error) {
 		u := fmt.Sprintf("%s%s", link, e.URL)
 
 		// I've seen "Green  Gulch" before
-		cleanLocation := cleanWhiteSpace(e.Location)
+		cleanLocation := clean(e.Location)
 
 		venue, ok := s.venueMap[cleanLocation]
 		if !ok {

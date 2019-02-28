@@ -4,6 +4,6 @@ import (
 	"strings"
 )
 
-func cleanWhiteSpace(s string) string {
-	return strings.Join(strings.Fields(s), " ")
+func clean(s string) string {
+	return strings.ToLower(strings.Join(strings.Fields(s), " "))
 }
