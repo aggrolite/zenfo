@@ -44,13 +44,25 @@ Sources are scraped by using the `Worker` interface. All workers share a common 
 3. Add some sort of detection on when a crawler is completely busted and needs updating.
 4. Add Dockerfile for easy deploy.
 
-## Build / Install
+## Build database and backend API
 
 `make docker`
 
-`./setup.sh`
+`make setup`
 
-`make`
+`make build`
+
+`make db`
+
+`make http-dev`
+
+## Run frontend
+
+I do this outside of Docker.
+
+`npm install`
+
+`npm run start`
 
 ## License
 

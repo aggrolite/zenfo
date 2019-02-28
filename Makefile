@@ -1,9 +1,12 @@
 GO_PKG_DIRS  := $(subst $(shell go list -e .),.,$(shell go list ./... | grep -v /vendor/))
 
-all: build http
+all: build
 
 http:
 	zenfo-http -dbname zenfo -dbuser postgres
+
+http-dev:
+	zenfo-http -dev
 
 build: fmt lint vet
 	go clean -i
@@ -20,7 +23,7 @@ release:
 	npm run build
 	make build
 
-make db:
+db:
 	zenfo-build -dbname zenfo -dbuser postgres
 
 vet:
