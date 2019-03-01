@@ -1,10 +1,20 @@
+/* Reset browser styles */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+    Global Elements
+   ========================================================================== */
+
 body {
   font-family: 'Fira Mono', monospace;
-  font-size: 18px;
+  font-size: 1rem;
   font-style: normal;
   font-variant: normal;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 1.25rem;
 }
 
 ul {
@@ -12,18 +22,26 @@ ul {
   padding-left: 0;
 }
 
+/* ==========================================================================
+    Menu
+   ========================================================================== */
+
 .menu {
-  background-color: black;
-  color: white;
-  width: 100%;
+  color: #ff5544;
+  border-bottom: 0.125rem solid #000;
+  /* padding: 0.9375rem; */
+  padding: 2.75rem;
 }
 
 .menu a {
-  color: hotpink;
+  color: #ff5544;
+  border-bottom: 0.0625rem dotted #ff5544;
+  text-decoration: none;
 }
 
-.venue label {
-  color: hotpink;
+.menu a:hover {
+  color: #000;
+  border-bottom: 0.0625rem dotted #000;
 }
 
 .menu ul {
@@ -31,23 +49,69 @@ ul {
 }
 
 .menu li {
-  margin: 0 20px;
+  margin: 0 1.25rem;
   display: inline-block;
+  transform: rotate(-20deg);
+  -webkit-transform: rotate(-20deg);
+  -ms-transform: rotate(-20deg);
+  -o-transform: rotate(-20deg);
+}
+
+/* Logo */
+.menu li:first-child {
+  font-size: 1.5rem;
+  color: #000;
+  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+}
+
+/* ==========================================================================
+   Calendar
+   ========================================================================== */
+
+.calendar {
+  margin-top: 1.25rem;
+}
+
+.calendar ul {
+  margin: 1.25rem auto;
+  width: 80%;
 }
 
 .calendar li {
-  padding: 20px 10px;
+  padding: 1.25rem 1.5625rem;
 }
 
+.calendar .venues {
+  margin-left: 1.875rem;
+}
+
+/* Individual Venue */
+.calendar .venue {
+  padding: 0.1875rem 0;
+}
+
+.venue label {
+  color: #f76253;
+  padding-left: 0.9375rem;
+}
+
+
+/* Events
+   ========================================================================== */
+
 .event:nth-child(even) {
-  background:rgba(0,0,0,0.1);
+  background: #f4f4f4;
 }
 
 .event {
   display: grid;
-  grid-template-columns: 60px auto;
+  grid-template-columns: 3.75rem auto;
   grid-template-rows: auto;
   align-content: start;
+  border-bottom: 0.0625rem dotted #ff5544;
 }
 
 .event .date {
@@ -59,6 +123,12 @@ ul {
   justify-self: start;
 }
 
+.event .date .day {
+  font-size: 200%;
+  font-weight: 800;
+  margin-bottom: 0.625rem;
+}
+
 .event .overview {
   grid-column-start: 2;
   grid-column-end: 2;
@@ -66,24 +136,20 @@ ul {
   grid-row-end: 1;
 }
 
-.event .overview .title {
-  font-size: 20px;
+.event a {
+  font-size: 1.25rem;
+  border-bottom: 0.0625rem dotted #ff5544;
+  color: #ff5544;
+  text-decoration: none;
+}
+
+.event a:hover {
+  color: #000;
+  border-bottom: 0.0625rem dotted #000;
 }
 
 .event .overview .venue {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
-}
-
-.event .date .day {
-  font-size: 200%;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-
-.event a {
-  font-size: 16px;
-  border-bottom: 1px dotted hotpink;
-  color: hotpink;
-  text-decoration: none;
+  margin-top: 0.3125rem;
 }
