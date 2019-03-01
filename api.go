@@ -149,11 +149,19 @@ func (api *API) getEvents(w http.ResponseWriter, r *http.Request) {
 	for param, v := range q {
 		if param == "id" {
 			events, err = api.events(api.eventsOneStmt, v[0])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			break
 		}
 
 		if param == "after" {
 			events, err = api.events(api.eventsAfterStmt, v[0])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			break
 
 		}
