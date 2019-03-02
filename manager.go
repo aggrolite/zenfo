@@ -74,7 +74,7 @@ func (m *Manager) Run() error {
 
 	var wg sync.WaitGroup
 	for _, worker := range m.workers {
-		wg.Add(1)
+		wg.Add(2)
 
 		w := worker
 		out := make(chan string)
@@ -95,6 +95,9 @@ func (m *Manager) Run() error {
 			for msg := range out {
 				log.Printf("[%s] -> %s\n", w.Name(), msg)
 			}
+
+			// Also wait for log output before marking done
+			wg.Done()
 		}()
 
 		go func() {
