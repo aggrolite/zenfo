@@ -28,7 +28,7 @@ func NewManager(dbName, dbUser string) (*Manager, error) {
 	m.workers = []Worker{
 		&Aczc{},
 		&Sfzc{},
-		&Fz{},
+		&Jikoji{},
 	}
 
 	if !m.dev {
