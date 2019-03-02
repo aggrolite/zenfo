@@ -85,6 +85,9 @@ func (m *Manager) Run() error {
 			if err := <-errs; err != nil {
 				log.Fatalf("[%s] -> FATAL: %s\n", w.Name(), err)
 			}
+
+			// Wait for any error before marking as done
+			wg.Done()
 		}()
 
 		// Print worker log to screen
@@ -95,7 +98,6 @@ func (m *Manager) Run() error {
 		}()
 
 		go func() {
-			defer wg.Done()
 			defer close(out)
 			defer close(errs)
 
@@ -135,8 +137,6 @@ func (m *Manager) Run() error {
 				}
 			}
 		}()
-		<-out
-		<-errs
 	}
 	wg.Wait()
 
