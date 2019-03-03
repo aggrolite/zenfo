@@ -24,7 +24,7 @@ release:
 	make build
 
 db:
-	zenfo-build -dbname zenfo -dbuser postgres
+	zenfo-build -dbname zenfo -dbuser postgres -delete
 
 vet:
 	go vet $(GO_PKG_DIRS)
