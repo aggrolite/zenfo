@@ -19,7 +19,7 @@ type Fz struct {
 	log      chan string
 }
 
-// Name return human-friendly name for worker for logs
+// Name returns human-friendly name for worker logs
 func (f *Fz) Name() string {
 	return "Floating Zendo (floatingzendo.org)"
 }
@@ -75,7 +75,7 @@ func (f *Fz) Events() ([]*Event, error) {
 
 	year := "2019" // doc.Find("div.entry-content blockquote em strong").First().Text()
 	if year == "" {
-		return nil, errors.New("Failed to extract year!")
+		return nil, errors.New("Failed to extract year")
 	}
 
 	var (

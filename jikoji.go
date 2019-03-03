@@ -85,7 +85,7 @@ func (j *Jikoji) Events() ([]*Event, error) {
 
 		// Error if failed
 		if e.URL == "" {
-			domErr = fmt.Errorf("Failed to get More Info link for event: %s\n", e.Name)
+			domErr = fmt.Errorf("Failed to get More Info link for event: %s", e.Name)
 			return false
 		}
 		if err := j.getProfileDetails(e); err != nil {
@@ -177,7 +177,7 @@ func (j *Jikoji) getProfileDetails(e *Event) error {
 
 			endDate, ok := start.Attr("datetime")
 			if !ok {
-				domErr = fmt.Errorf("Failed to get end date: %s\n", e.URL)
+				domErr = fmt.Errorf("Failed to get end date: %s", e.URL)
 				return false
 			}
 			j.log <- fmt.Sprintf("end=%s", endDate)
