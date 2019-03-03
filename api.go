@@ -37,7 +37,7 @@ func NewAPI(dbUser, dbName, cert, key string, dev bool) (*API, error) {
 	q := "SELECT id, venue_id, name, blurb, description, start_date, end_date, url FROM events"
 
 	var stmtErr error
-	a.eventsAllStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s ORDER BY start_date LIMIT 20", q))
+	a.eventsAllStmt, stmtErr = a.dbh.Prepare(fmt.Sprintf("%s WHERE start_date >= now()::date - interval '1 day' ORDER BY start_date LIMIT 20", q))
 	if stmtErr != nil {
 		return nil, stmtErr
 	}
