@@ -11,10 +11,11 @@ import (
 
 // Manager handles running all workers
 type Manager struct {
-	workers []Worker
-	db      *sql.DB
-	log     chan string
-	DryRun  bool
+	workers    []Worker
+	db         *sql.DB
+	log        chan string
+	DryRun     bool
+	DeleteRows bool
 }
 
 // NewManager builds internal worker map and returns new Mananger object
@@ -29,12 +30,14 @@ func NewManager(dbName, dbUser string) (*Manager, error) {
 		&Jikoji{},
 	}
 
+	// TODO probably abstract all the DB logic to its own class
 	if !m.DryRun {
 		db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", dbUser, dbName))
 		if err != nil {
 			return nil, err
 		}
 		m.db = db
+
 	}
 
 	return m, nil
@@ -53,6 +56,19 @@ func (m *Manager) Run() error {
 	)
 
 	if !m.DryRun {
+
+		// TODO Insert or update to maintain event IDs
+		if m.DeleteRows {
+			r, err := m.db.Exec("DELETE FROM events")
+			if err != nil {
+				return err
+			}
+			count, err := r.RowsAffected()
+			if err != nil {
+				return err
+			}
+			log.Printf("Deleted %d rows!\n", count)
+		}
 
 		var err error
 

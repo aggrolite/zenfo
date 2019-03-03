@@ -9,15 +9,17 @@ import (
 )
 
 var (
-	dbName string
-	dbUser string
-	dryRun bool
+	dbName     string
+	dbUser     string
+	dryRun     bool
+	deleteRows bool
 )
 
 func init() {
 	flag.StringVar(&dbName, "dbname", os.Getenv("DBNAME"), "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", os.Getenv("DBUSER"), "Postgres DB user")
 	flag.BoolVar(&dryRun, "dryrun", false, "Dryrun. Run crawlers, but don't store to DB. Useful for development")
+	flag.BoolVar(&deleteRows, "delete", false, "Delete all DB rows before storing")
 	flag.Parse()
 
 	if len(dbName) == 0 {
@@ -36,6 +38,7 @@ func main() {
 		log.Fatal(err)
 	}
 	m.DryRun = dryRun
+	m.DeleteRows = deleteRows
 
 	if err := m.Run(); err != nil {
 		log.Fatal(err)
