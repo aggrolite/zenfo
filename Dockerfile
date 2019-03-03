@@ -14,6 +14,7 @@ RUN \
 	build-essential \
 	dnsutils \
 	less \
+	vim \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN \
