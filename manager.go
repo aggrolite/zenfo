@@ -14,14 +14,12 @@ type Manager struct {
 	workers []Worker
 	db      *sql.DB
 	log     chan string
-	dev     bool
+	DryRun  bool
 }
 
 // NewManager builds internal worker map and returns new Mananger object
 func NewManager(dbName, dbUser string) (*Manager, error) {
 	m := new(Manager)
-
-	//m.dev = true
 
 	// TODO It'd be nice to keep worker code inside a subdir, e.g. workers/
 	// Currently it creates circular imports
@@ -31,7 +29,7 @@ func NewManager(dbName, dbUser string) (*Manager, error) {
 		&Jikoji{},
 	}
 
-	if !m.dev {
+	if !m.DryRun {
 		db, err := sql.Open("postgres", fmt.Sprintf("user=%s dbname=%s sslmode=disable", dbUser, dbName))
 		if err != nil {
 			return nil, err
@@ -54,7 +52,7 @@ func (m *Manager) Run() error {
 		eventInsert *sql.Stmt
 	)
 
-	if !m.dev {
+	if !m.DryRun {
 
 		var err error
 
@@ -123,7 +121,7 @@ func (m *Manager) Run() error {
 				var venueID int
 
 				// Create any new venues found from events
-				if !m.dev {
+				if !m.DryRun {
 					err := venueSelect.QueryRow(venue.Name).Scan(&venueID)
 					if err == sql.ErrNoRows {
 						if err := venueInsert.QueryRow(venue.Name, venue.Addr, venue.Lat, venue.Lng, venue.Website, venue.Phone, venue.Email).Scan(&venueID); err != nil {

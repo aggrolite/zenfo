@@ -11,11 +11,13 @@ import (
 var (
 	dbName string
 	dbUser string
+	dryRun bool
 )
 
 func init() {
 	flag.StringVar(&dbName, "dbname", os.Getenv("DBNAME"), "Postgres DB name")
 	flag.StringVar(&dbUser, "dbuser", os.Getenv("DBUSER"), "Postgres DB user")
+	flag.BoolVar(&dryRun, "dryrun", false, "Dryrun. Run crawlers, but don't store to DB. Useful for development")
 	flag.Parse()
 
 	if len(dbName) == 0 {
@@ -33,6 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	m.DryRun = dryRun
 
 	if err := m.Run(); err != nil {
 		log.Fatal(err)
