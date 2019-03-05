@@ -2,7 +2,6 @@ import React from 'react'
 import Moment from 'react-moment'
 import fetch from 'isomorphic-fetch'
 import Promise from 'es6-promise'
-import { Link } from 'react-router-dom'
 
 import API from '../constants/api'
 
@@ -99,9 +98,9 @@ class Calendar extends React.Component {
                 </div>
               </div>
               <div className="overview">
-                <Link to={"/e/" + event.id} className="title">
+                <a href={event.url} target="_blank" rel="noopener noreferrer">
                   {event.name}
-                </Link>
+                </a>
                 <div className="venue">{event.venue.name}</div>
               </div>
             </li>
