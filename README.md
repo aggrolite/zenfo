@@ -14,7 +14,7 @@ What if you're traveling, and wish to attend a short retreat? Many Zen centers h
 
 # Nitty Gritty
 
-There are three main pices:
+There are three main pieces:
 
 1. Crawlers
 
